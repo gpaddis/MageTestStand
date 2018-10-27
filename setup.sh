@@ -38,5 +38,4 @@ if [ -d "${WORKSPACE}/vendor" ] ; then
 fi
 
 cd ${BUILDENV}/htdocs
-
 ${BUILDENV}/bin/phpunit --colors -d display_errors=1

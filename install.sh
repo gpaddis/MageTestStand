@@ -62,6 +62,7 @@ if [ ! -f htdocs/app/etc/local.xml ] ; then
       --baseUrl="http://magento.local/" || { echo "Installing Magento failed"; exit 1; }
 fi
 
+
 if [ ! -f composer.lock ] ; then
     tools/composer.phar install
 fi
@@ -76,7 +77,7 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]] ; then
   if [ ! -z $MODULE_DEPENDENCIES ]; then
     for PACKAGE in $MODULE_DEPENDENCIES
     do
-      composer require $PACKAGE
+      composer require ${PACKAGE// /:}
     done
   fi
 fi
