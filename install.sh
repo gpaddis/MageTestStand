@@ -73,7 +73,7 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]] ; then
   # Get the module dependencies without phpunit and composer installer
   EXCLUDE_MODULES="ecomdev_phpunit|magento-composer-installer"
   MODULE_DEPENDENCIES=$(composer show --self -d ${MODULE_DIR} | awk '/requires/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$EXCLUDE_MODULES")
-  if [ ! -z $MODULE_DEPENDENCIES]; then
+  if [ ! -z $MODULE_DEPENDENCIES ]; then
     for PACKAGE in $MODULE_DEPENDENCIES
     do
       composer require $PACKAGE
