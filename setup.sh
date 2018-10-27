@@ -26,6 +26,7 @@ BUILDENV=`mktemp -d /tmp/mageteststand.XXXXXXXX`
 
 echo "Using build directory ${BUILDENV}"
 
+# TODO: revert it to the original path after debugging
 git clone https://github.com/gpaddis/MageTestStand.git -b "install-module-dependencies" "${BUILDENV}"
 cp -rf "${WORKSPACE}" "${BUILDENV}/.modman/"
 
