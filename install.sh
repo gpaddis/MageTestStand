@@ -65,6 +65,7 @@ fi
 # Allow custom dependency installation in composer.json
 if [[ -f ${MODULE_DIR}/composer.json  && ! -f ${MODULE_DIR}/composer.lock ]]; then
     cp .modman/${MODULE_NAME}/composer.json composer.json
+    tools/composer.phar config repositories.ecomdev/ecomdev_phpunit vcs https://github.com/AOEpeople/EcomDev_PHPUnit.git
     tools/composer.phar config extra.magento-root-dir "htdocs/"
     tools/composer.phar install
 elif [ ! -f composer.lock ]; then
