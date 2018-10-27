@@ -73,12 +73,11 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]] ; then
   echo "Installing module dependencies..."
   # Get the module dependencies without phpunit, composer installer and php version
   EXCLUDE_MODULES="ecomdev_phpunit|magento-composer-installer|^php\s"
-  MODULE_LIST=$(composer show --self -d ${MODULE_DIR} | awk '/requires/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$EXCLUDE_MODULES")
-  FORMATTED_MODULE_LIST=${MODULE_LIST// /:}
-  if [ ! -z "$FORMATTED_MODULE_LIST" ]; then
-    for PACKAGE in "$FORMATTED_MODULE_LIST"
+  MODULE_LIST=($(composer show --self -d ${MODULE_DIR} | awk '/requires/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$EXCLUDE_MODULES"))
+  if [ ! ${#MODULE_LIST[@]} -eq 0 ]; then
+    for PACKAGE in $FORMATTED_MODULE_LIST
     do
-      composer require "$PACKAGE"
+      composer require ${PACKAGE//}
     done
   fi
 fi
