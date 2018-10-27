@@ -39,12 +39,4 @@ fi
 
 cd ${BUILDENV}/htdocs
 
-if [ -f ${BUILDENV}/vendor/bin/phpunit ] ; then
-    PHPUNIT_BIN="${BUILDENV}/vendor/bin/phpunit"
-elif [ -f ${BUILDENV}/bin/phpunit ] ; then
-    PHPUNIT_BIN="${BUILDENV}/bin/phpunit"
-else
-    echo "Unable to find the phpunit binary."; exit 1
-fi
-
-$PHPUNIT_BIN --colors -d display_errors=1
+${BUILDENV}/bin/phpunit --colors -d display_errors=1
