@@ -1,5 +1,8 @@
 #!/bin/bash
 
+MODULE_NAME="$1"
+MODULE_DIR=".modman/${MODULE_NAME}"
+
 # Get absolute path to main directory
 ABSPATH=$(cd "${0%/*}" 2>/dev/null; echo "${PWD}/${0##*/}")
 SOURCE_DIR=`dirname "${ABSPATH}"`
@@ -59,7 +62,12 @@ if [ ! -f htdocs/app/etc/local.xml ] ; then
       --baseUrl="http://magento.local/" || { echo "Installing Magento failed"; exit 1; }
 fi
 
-if [ ! -f composer.lock ] ; then
+# Allow custom composer.json
+if [[ -f ${MODULE_DIR}/composer.json  && ! -f ${MODULE_DIR}/composer.lock ]]; then
+    cp .modman/${MODULE_NAME}/composer.json composer.json
+    tools/composer.phar config extra.magento-root-dir "htdocs/"
+    tools/composer.phar install
+elif [ ! -f composer.lock ]; then
     tools/composer.phar install
 fi
 
