@@ -39,10 +39,10 @@ fi
 
 cd ${BUILDENV}/htdocs
 
-if [ -f ${BUILDENV}/bin/phpunit ]; then
-    PHPUNIT_BIN="${BUILDENV}/bin/phpunit"
-elif [ -f ${BUILDENV}/vendor/bin/phpunit ]; then
+if [ -f ${BUILDENV}/vendor/bin/phpunit ] ; then
     PHPUNIT_BIN="${BUILDENV}/vendor/bin/phpunit"
+elif [ -f ${BUILDENV}/bin/phpunit ] ; then
+    PHPUNIT_BIN="${BUILDENV}/bin/phpunit"
 fi
 
 $PHPUNIT_BIN --colors -d display_errors=1
