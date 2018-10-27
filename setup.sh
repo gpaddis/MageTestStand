@@ -38,4 +38,11 @@ if [ -d "${WORKSPACE}/vendor" ] ; then
 fi
 
 cd ${BUILDENV}/htdocs
-${BUILDENV}/bin/phpunit --colors -d display_errors=1
+
+if [ -f ${BUILDENV}/bin/phpunit ]; then
+    PHPUNIT_BIN="${BUILDENV}/bin/phpunit"
+elif [ -f ${BUILDENV}/vendor/bin/phpunit ]
+    PHPUNIT_BIN="${BUILDENV}/vendor/bin/phpunit"
+fi
+
+$PHPUNIT_BIN --colors -d display_errors=1
