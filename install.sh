@@ -1,4 +1,8 @@
 #!/bin/bash
+set -e
+
+MODULE_NAME="$1"
+MODULE_DIR=".modman/${MODULE_NAME}"
 
 # Get absolute path to main directory
 ABSPATH=$(cd "${0%/*}" 2>/dev/null; echo "${PWD}/${0##*/}")
@@ -59,10 +63,23 @@ if [ ! -f htdocs/app/etc/local.xml ] ; then
       --baseUrl="http://magento.local/" || { echo "Installing Magento failed"; exit 1; }
 fi
 
+
 if [ ! -f composer.lock ] ; then
     tools/composer.phar install
 fi
 
 tools/modman deploy-all --force
+
+if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]]; then
+  echo "Checking module dependencies..."
+  # Get the module dependencies without phpunit, composer installer and php version
+  exclude_modules="phpunit|magento-composer-installer|^php\s"
+  module_list=("$(composer show --self -d ${MODULE_DIR} | awk '/requires*/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$exclude_modules")")
+  if [ ! ${#module_list[@]} -eq 0 ]; then
+      echo -e "Found dependencies:\n$module_list"
+      composer require ${module_list// /:}
+  else echo "No module dependencies found in composer.json."
+  fi
+fi
 
 tools/n98-magerun.phar --root-dir=htdocs config:set dev/template/allow_symlink 1
