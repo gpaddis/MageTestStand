@@ -76,7 +76,7 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]]; then
   exclude_modules="phpunit|magento-composer-installer|^php\s"
   module_list=("$(composer show --self -d ${MODULE_DIR} | awk '/requires*/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$exclude_modules")")
   if [ ! ${#module_list[@]} -eq 0 ]; then
-      echo "Found dependencies: $module_list"
+      echo -e "Found dependencies:\n$module_list"
       composer require ${module_list// /:}
   else echo "No module dependencies found in composer.json."
   fi
