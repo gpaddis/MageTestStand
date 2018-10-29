@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 MODULE_NAME="$1"
 MODULE_DIR=".modman/${MODULE_NAME}"
