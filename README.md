@@ -23,6 +23,8 @@ It uses following tools:
 - In case you want to allow EcomDev_PHPUnit to use the main database instead of the test database you can set following environment variable to 1. This might be required if you're planning on writing integration tests.
   - `MAGENTO_DB_ALLOWSAME`
 - Environment variable `MAGENTO_VERSION` with valid Magento version for n98-magerun's install command
+- If you have specified additional dependencies in your composer.json file and you need to install them to run the test, set the following environment variable to 1.
+  - `INSTALL_DEPENDENCIES`
 
 ## General usage
 
@@ -81,6 +83,58 @@ magento-ce-1.7.0.2
 - Make sure that the configurations are build sequentiell, otherwise you might run into database issues!
 - use the following script as a shell build step `curl -sSL https://raw.githubusercontent.com/AOEpeople/MageTestStand/master/setup.sh | bash`
 
+## GitLab CI configuration
+First, create the file `ci/docker_install.sh` in your module to install the dependencies for the docker runner.
+```sh
+#!/bin/bash
+
+# We need to install dependencies only for Docker
+[[ ! -e /.dockerenv ]] && exit 0
+
+set -xe
+
+# Install git (the php image doesn't have it) which is required by composer
+apt-get update -yqq
+apt-get install git libpng-dev libmcrypt-dev libxml2-dev -yqq
+
+# Here you can install any extension that you need
+docker-php-ext-configure mcrypt
+docker-php-ext-install pdo_mysql gd mcrypt zip soap
+```
+
+Example .gitlab-ci.yml file (in the Magento module you want to test):
+```yaml
+before_script:
+  - bash ci/docker_install.sh > /dev/null
+
+.test_variables: &test_variables
+    MAGENTO_VERSION: magento-mirror-1.9.3.4
+    INSTALL_DEPENDENCIES: 1
+    # Configure mysql environment variables (https://hub.docker.com/r/_/mysql/)
+    MYSQL_DATABASE: magento
+    MYSQL_ROOT_PASSWORD: root
+    # Credentials for MageTestStand
+    MAGENTO_DB_HOST: mysql
+    MAGENTO_DB_USER: root
+    MAGENTO_DB_NAME: $MYSQL_DATABASE
+    MAGENTO_DB_PASS: $MYSQL_ROOT_PASSWORD
+    MAGENTO_DB_ALLOWSAME: 1
+
+.run_tests: &run_tests
+  stage: test
+  services:
+    - mysql:5.7
+  variables:
+    <<: *test_variables
+  script:
+  - curl -sSL https://raw.githubusercontent.com/gpaddis/MageTestStand/setup.sh | bash
+
+# Define a job for each PHP version you want to run the test on
+test:php5.6:
+  image: php:5.6
+  <<: *run_tests
+```
+
 ## Unittest your Module directly from bash/zsh/shell
 - Set up your environment
 ```bash
@@ -104,7 +158,7 @@ curl -sSL https://raw.githubusercontent.com/AOEpeople/MageTestStand/master/setup
 
 ### Skip cleanup
 
-If you're running this in an CI environment that will delete the workspace after the run (e.g. Travis CI) you might not want to wait for this script to explicitely cleanup. Using `SKIP_CLEANUP` parameter you can make MageTestStand skip this step. 
+If you're running this in an CI environment that will delete the workspace after the run (e.g. Travis CI) you might not want to wait for this script to explicitely cleanup. Using `SKIP_CLEANUP` parameter you can make MageTestStand skip this step.
 
 This parameter can be set via an environment variable (Travis CI supports that via env/global) or from command line:
 ```
