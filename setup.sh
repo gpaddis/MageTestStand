@@ -17,6 +17,11 @@ if [ ! -z $TRAVIS_BUILD_DIR ] ; then
   WORKSPACE=$TRAVIS_BUILD_DIR
 fi
 
+# check if this is a gitlab-ci environment
+if [ ! -z $CI_PROJECT_DIR ] ; then
+  WORKSPACE=$CI_PROJECT_DIR
+fi
+
 if [ -z $WORKSPACE ] ; then
   echo "No workspace configured, please set your WORKSPACE environment"
   exit
