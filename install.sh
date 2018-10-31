@@ -2,6 +2,7 @@
 
 MODULE_NAME="$1"
 MODULE_DIR=".modman/${MODULE_NAME}"
+COMPOSER_BIN="tools/composer.phar"
 
 # Get absolute path to main directory
 ABSPATH=$(cd "${0%/*}" 2>/dev/null; echo "${PWD}/${0##*/}")
@@ -64,7 +65,7 @@ fi
 
 
 if [ ! -f composer.lock ] ; then
-    tools/composer.phar install
+  $COMPOSER_BIN install
 fi
 
 tools/modman deploy-all --force
@@ -73,10 +74,10 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]]; then
   echo "Checking module dependencies..."
   # Get the module dependencies without phpunit, composer installer and php version
   exclude_modules="phpunit|magento-composer-installer|^php\s"
-  module_list=("$(composer show --self -d ${MODULE_DIR} | awk '/requires*/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$exclude_modules")")
-  if [ ! ${#module_list[@]} -eq 0 ]; then
+  module_list=("$($COMPOSER_BIN show --self -d ${MODULE_DIR} | awk '/requires*/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$exclude_modules")")
+  if [ ! -z "$module_list" ]; then
       echo -e "Found dependencies:\n$module_list"
-      tools/composer.phar require ${module_list// /:}
+      $COMPOSER_BIN require ${module_list// /:}
   else echo "No module dependencies found in composer.json."
   fi
 fi
