@@ -73,7 +73,7 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]]; then
   echo "Checking module dependencies..."
   # Get the module dependencies without phpunit, composer installer and php version
   exclude_modules="phpunit|magento-composer-installer|^php\s"
-  module_list=("$(composer show --self -d ${MODULE_DIR} | awk '/requires*/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$exclude_modules")")
+  module_list=("$(tools/composer show --self -d ${MODULE_DIR} | awk '/requires*/{flag=1;next}/^$/{flag=0}flag' | egrep -v "$exclude_modules")")
   if [ ! ${#module_list[@]} -eq 0 ]; then
       echo -e "Found dependencies:\n$module_list"
       tools/composer.phar require ${module_list// /:}
