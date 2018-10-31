@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 MODULE_NAME="$1"
 MODULE_DIR=".modman/${MODULE_NAME}"
 COMPOSER_BIN="tools/composer.phar"
