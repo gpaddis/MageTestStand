@@ -31,7 +31,7 @@ BUILDENV=`mktemp -d /tmp/mageteststand.XXXXXXXX`
 
 echo "Using build directory ${BUILDENV}"
 
-git clone https://github.com/gpaddis/MageTestStand.git -b "fix-gitlab-ci-integration" "${BUILDENV}"
+git clone https://github.com/gpaddis/MageTestStand.git "${BUILDENV}"
 cp -rf "${WORKSPACE}" "${BUILDENV}/.modman/"
 
 MODULE_NAME=${WORKSPACE##*/}
