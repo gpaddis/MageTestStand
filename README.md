@@ -127,7 +127,7 @@ before_script:
   variables:
     <<: *test_variables
   script:
-  - curl -sSL https://raw.githubusercontent.com/gpaddis/MageTestStand/setup.sh | bash
+  - curl -sSL https://raw.githubusercontent.com/gpaddis/MageTestStand/master/setup.sh | bash
 
 # Define a job for each PHP version you want to run the test on
 test:php5.6:
