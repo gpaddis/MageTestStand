@@ -70,6 +70,7 @@ fi
 
 tools/modman deploy-all --force
 
+# Install custom dependencies in the module's composer.json.
 if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]]; then
   echo "Checking module dependencies..."
   # Get the module dependencies without phpunit, composer installer and php version
@@ -80,6 +81,12 @@ if [[ ! -z $INSTALL_DEPENDENCIES && -f $MODULE_DIR/composer.json ]]; then
       $COMPOSER_BIN require ${module_list// /:}
   else echo "No module dependencies found in composer.json."
   fi
+fi
+
+# Install the module dependencies if a composer.json was deployed in the Magento directory.
+if [ -f htdocs/composer.json ]; then
+  echo "Installing repository dependencies in the Magento directory..."
+  $COMPOSER_BIN -d="htdocs" install
 fi
 
 tools/n98-magerun.phar --root-dir=htdocs config:set dev/template/allow_symlink 1
